@@ -7,24 +7,44 @@
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen"
         Closing="BackupManager_Closing"
-        Title="BackupsManager" Height="305" Width="600">
-    <Grid Margin="0,0,0,0">
-        <TextBlock x:Name="UserSection" TextWrapping="Wrap" Text="User" FontFamily="Cascadia Code Bold" FontSize="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="50,30,0,0"/>
+        FontFamily="Cascadia Code"
+        Title="BackupsManager" Height="305" Width="600" Background="#FF202121">
+    <Viewbox HorizontalAlignment="Stretch" Height="Auto" Margin="0,0,0,0" Stretch="Fill" VerticalAlignment="Stretch" Width="Auto">
+        <Grid Height="289.04" Width="600">
 
-        <ComboBox x:Name="UsersComboBox" VerticalAlignment="Top" Margin="50,58,0,0" HorizontalAlignment="Left" Width="500" SelectedIndex="0" SelectionChanged="UsersComboBox_SelectionChanged"/>
+            <TextBlock x:Name="UserSection" TextWrapping="Wrap" Text="User" FontFamily="Cascadia Code Bold" FontSize="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="50,30,0,0" Foreground="#FFECECEC"/>
 
-        <Button x:Name="OpenSaveLocationButton" Content="Open save location" FontFamily="Cascadia Code" TextBlock.TextAlignment="Center" Height="auto" Padding="5" Click="OpenSaveLocation_Click" VerticalAlignment="Top" Margin="50,85,0,0" HorizontalAlignment="Left"/>
+            <ComboBox x:Name="UsersComboBox" VerticalAlignment="Top" Margin="0,58,0,0" HorizontalAlignment="Center" Width="500" SelectedIndex="0" FontFamily="Cascadia Code"  SelectionChanged="UsersComboBox_SelectionChanged"/>
 
-        <TextBlock x:Name="OnlyAdministrator" TextWrapping="Wrap" Text="*Only Administrator" FontFamily="Cascadia Code" FontSize="10" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="194,92,0,0"/>
+            <Button x:Name="OpenSaveLocationButton" Content="Open save location" FontFamily="Cascadia Code" TextBlock.TextAlignment="Center" Height="auto" Padding="5" Click="OpenSaveLocation_Click" VerticalAlignment="Top" Margin="50,85,0,0" HorizontalAlignment="Left" Background="#FF3498DB">
+                <Button.Resources>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="CornerRadius" Value="7"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
 
-        <TextBlock x:Name="ManagementSection" HorizontalAlignment="Left" Margin="50,151,0,0" TextWrapping="Wrap" Text="Management" FontFamily="Cascadia Code Bold" FontSize="20" VerticalAlignment="Top"/>
+            <TextBlock x:Name="ManagementSection" HorizontalAlignment="Left" Margin="50,151,0,0" TextWrapping="Wrap" Text="Management" FontFamily="Cascadia Code Bold" FontSize="20" VerticalAlignment="Top" Foreground="#FFECECEC"/>
 
-        <TextBox x:Name="NewBackupTextBox" HorizontalAlignment="Left" Margin="50,178,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="290" Height="38" FontSize="20"  FontFamily="Cascadia Code" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+            <TextBox x:Name="NewBackupTextBox" HorizontalAlignment="Left" Margin="50,178,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="290" Height="38" FontSize="20"  FontFamily="Cascadia Code" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" MaxLength="30"/>
 
-        <Button x:Name="NewBackupButton" Content="Create new backup" FontFamily="Cascadia Code" TextBlock.TextAlignment="Center" Height="auto" Padding="10" Click="NewBackup_Click" FontSize="14" VerticalAlignment="Top" Margin="350,178,0,0" HorizontalAlignment="Left" Width="200"/>
+            <Button x:Name="NewBackupButton" Content="Create new backup" FontFamily="Cascadia Code" TextBlock.TextAlignment="Center" Height="auto" Padding="10" Click="NewBackup_Click" FontSize="14" VerticalAlignment="Top" Margin="350,178,0,0" HorizontalAlignment="Left" Width="200" Background="#FF2ECC71">
+                <Button.Resources>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="CornerRadius" Value="7"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
 
-        <ComboBox x:Name="BackupsComboBox" Margin="50,221,0,0" Width="290" HorizontalAlignment="Left" Height="38" VerticalAlignment="Top" FontFamily="Cascadia Code" FontSize="14"/>
+            <ComboBox x:Name="BackupsComboBox" Margin="50,221,0,0" Width="290" HorizontalAlignment="Left" Height="38" VerticalAlignment="Top" FontFamily="Cascadia Code" FontSize="14" VerticalContentAlignment="Center"/>
 
-        <Button x:Name="LoadBackupButton" Content="Load backup" FontFamily="Cascadia Code" TextBlock.TextAlignment="Center" Height="auto" Padding="10" Click="LoadBackup_Click" FontSize="14" Width="200" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="350,221,0,0"/>
-    </Grid>
+            <Button x:Name="LoadBackupButton" Content="Load backup" FontFamily="Cascadia Code" TextBlock.TextAlignment="Center" Height="auto" Padding="10" Click="LoadBackup_Click" FontSize="14" Width="200" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="350,221,0,0" Background="#FFE74C3C">
+                <Button.Resources>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="CornerRadius" Value="7"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+        </Grid>
+    </Viewbox>
 </Window>

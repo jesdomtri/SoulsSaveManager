@@ -1,17 +1,47 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows</TargetFramework>
-    <Nullable>enable</Nullable>
-    <UseWPF>true</UseWPF>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net6.0-windows</TargetFramework>
+		<Nullable>enable</Nullable>
+		<UseWPF>true</UseWPF>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
+		<PublishSingleFile>true</PublishSingleFile>
+		<ApplicationIcon>Resource\icon.ico</ApplicationIcon>
+		<PackageIcon>icon.png</PackageIcon>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.42" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.2.0" />
-    <PackageReference Include="ScrapySharp" Version="3.0.0" />
-  </ItemGroup>
+	<ItemGroup>
+	  <None Remove="Resource\ds2icon.png" />
+	  <None Remove="Resource\ds3icon.png" />
+	  <None Remove="Resource\dsicon.png" />
+	  <None Remove="Resource\edicon.png" />
+	  <None Remove="Resource\skricon.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="Resource\icon.ico" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="HtmlAgilityPack" Version="1.11.42" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.2.0" />
+		<PackageReference Include="ScrapySharp" Version="3.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Resource Include="Resource\ds2icon.png" />
+	  <Resource Include="Resource\ds3icon.png" />
+	  <Resource Include="Resource\dsicon.png" />
+	  <Resource Include="Resource\edicon.png" />
+	  <Resource Include="Resource\skricon.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="Resource\icon.png">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	</ItemGroup>
 
 </Project>
