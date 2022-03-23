@@ -1,0 +1,30 @@
+﻿<Window x:Class="SoulsSaveManager.BackupsManager" 
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen"
+        Closing="BackupManager_Closing"
+        Title="BackupsManager" Height="305" Width="600">
+    <Grid Margin="0,0,0,0">
+        <TextBlock x:Name="UserSection" TextWrapping="Wrap" Text="User" FontFamily="Cascadia Code Bold" FontSize="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="50,30,0,0"/>
+
+        <ComboBox x:Name="UsersComboBox" VerticalAlignment="Top" Margin="50,58,0,0" HorizontalAlignment="Left" Width="500" SelectedIndex="0" SelectionChanged="UsersComboBox_SelectionChanged"/>
+
+        <Button x:Name="OpenSaveLocationButton" Content="Open save location" FontFamily="Cascadia Code" TextBlock.TextAlignment="Center" Height="auto" Padding="5" Click="OpenSaveLocation_Click" VerticalAlignment="Top" Margin="50,85,0,0" HorizontalAlignment="Left"/>
+
+        <TextBlock x:Name="OnlyAdministrator" TextWrapping="Wrap" Text="*Only Administrator" FontFamily="Cascadia Code" FontSize="10" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="194,92,0,0"/>
+
+        <TextBlock x:Name="ManagementSection" HorizontalAlignment="Left" Margin="50,151,0,0" TextWrapping="Wrap" Text="Management" FontFamily="Cascadia Code Bold" FontSize="20" VerticalAlignment="Top"/>
+
+        <TextBox x:Name="NewBackupTextBox" HorizontalAlignment="Left" Margin="50,178,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="290" Height="38" FontSize="20"  FontFamily="Cascadia Code" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+
+        <Button x:Name="NewBackupButton" Content="Create new backup" FontFamily="Cascadia Code" TextBlock.TextAlignment="Center" Height="auto" Padding="10" Click="NewBackup_Click" FontSize="14" VerticalAlignment="Top" Margin="350,178,0,0" HorizontalAlignment="Left" Width="200"/>
+
+        <ComboBox x:Name="BackupsComboBox" Margin="50,221,0,0" Width="290" HorizontalAlignment="Left" Height="38" VerticalAlignment="Top" FontFamily="Cascadia Code" FontSize="14"/>
+
+        <Button x:Name="LoadBackupButton" Content="Load backup" FontFamily="Cascadia Code" TextBlock.TextAlignment="Center" Height="auto" Padding="10" Click="LoadBackup_Click" FontSize="14" Width="200" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="350,221,0,0"/>
+    </Grid>
+</Window>
