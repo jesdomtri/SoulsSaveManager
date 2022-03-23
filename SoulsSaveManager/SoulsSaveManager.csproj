@@ -6,21 +6,23 @@
 		<Nullable>enable</Nullable>
 		<UseWPF>true</UseWPF>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
+		<RuntimeIdentifier>win10-x64</RuntimeIdentifier>
 		<PublishSingleFile>true</PublishSingleFile>
+		<IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
 		<ApplicationIcon>Resource\icon.ico</ApplicationIcon>
 		<PackageIcon>icon.png</PackageIcon>
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <None Remove="Resource\ds2icon.png" />
-	  <None Remove="Resource\ds3icon.png" />
-	  <None Remove="Resource\dsicon.png" />
-	  <None Remove="Resource\edicon.png" />
-	  <None Remove="Resource\skricon.png" />
+		<None Remove="Resource\ds2icon.png" />
+		<None Remove="Resource\ds3icon.png" />
+		<None Remove="Resource\dsicon.png" />
+		<None Remove="Resource\edicon.png" />
+		<None Remove="Resource\skricon.png" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Content Include="Resource\icon.ico" />
+		<Content Include="Resource\icon.ico" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -30,18 +32,22 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Resource Include="Resource\ds2icon.png" />
-	  <Resource Include="Resource\ds3icon.png" />
-	  <Resource Include="Resource\dsicon.png" />
-	  <Resource Include="Resource\edicon.png" />
-	  <Resource Include="Resource\skricon.png" />
+		<Resource Include="Resource\ds2icon.png" />
+		<Resource Include="Resource\ds3icon.png" />
+		<Resource Include="Resource\dsicon.png" />
+		<Resource Include="Resource\edicon.png" />
+		<Resource Include="Resource\skricon.png" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Update="Resource\icon.png">
-	    <Pack>True</Pack>
-	    <PackagePath>\</PackagePath>
-	  </None>
+		<None Update="Resource\icon.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+		<Content Update="*-exclude.dll">
+			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+		</Content>
 	</ItemGroup>
 
 </Project>

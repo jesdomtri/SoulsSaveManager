@@ -58,10 +58,10 @@ namespace SoulsSaveManager
                     {
                         string targetFile = $"{targetPath}\\{file.Split("\\").Last()}";
                         File.Copy(file, targetFile);
-                        NewBackupTextBox.Clear();
-                        MessageBox.Show("Done", "", MessageBoxButton.OK, MessageBoxImage.Information);
-                        LoadBackupsComboBox();
                     }
+                    NewBackupTextBox.Clear();
+                    MessageBox.Show("Done", "", MessageBoxButton.OK, MessageBoxImage.Information);
+                    LoadBackupsComboBox();
                 }
                 else
                 {
@@ -81,8 +81,8 @@ namespace SoulsSaveManager
                 {
                     string targetFile = $"{targetPath}\\{file.Split("\\").Last()}";
                     File.Copy(file, targetFile, true);
-                    MessageBox.Show("Done", "", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
+                MessageBox.Show("Done", "", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             else
             {
@@ -91,8 +91,8 @@ namespace SoulsSaveManager
                 {
                     string targetFile = $"{targetPath}\\{file.Split("\\").Last()}";
                     File.Copy(file, targetFile, true);
-                    MessageBox.Show("Done", "", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
+                MessageBox.Show("Done", "", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 
