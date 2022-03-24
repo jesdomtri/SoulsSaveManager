@@ -1,24 +1,26 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System;
-using HtmlAgilityPack;
-using System.Linq;
-using System.Diagnostics;
-using System.Collections.ObjectModel;
-
-namespace SoulsSaveManager
+﻿namespace SoulsSaveManager
 {
     public partial class BackupsManager : Window
     {
         private MainWindow _mainWindow;
-        private string _gameName;
-        public BackupsManager(MainWindow mainWindow, string gameSelected)
+        private Game _game;
+        private string _selectedUserComboBox;
+        private string _userSaveDataPath;
+        private string _userBackupPath;
+        public BackupsManager(MainWindow mainWindow, Game game)
         {
             _mainWindow = mainWindow;
-            _gameName = SelectTitleGame(gameSelected);
+            _game = game;
+
             InitializeComponent();
             LoadUsersComboBox();
+
+            _userBackupPath = $"{_game.BackupPath}\\{_selectedUserComboBox}";
+            _userSaveDataPath = $"{_game.SaveDataPath}\\{_selectedUserComboBox}";
+
             LoadBackupsComboBox();
+
+            _selectedUserComboBox = UsersComboBox.Text.Split(" - ")[0];
         }
 
         private void BackupManager_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -30,8 +32,7 @@ namespace SoulsSaveManager
         {
             try
             {
-                string user = UsersComboBox.Text.Split(" - ")[0];
-                Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", $"\\Users\\{Environment.UserName}\\AppData\\Roaming\\{_gameName}\\{user}");
+                Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", _userSaveDataPath);
             }
             catch
             {
@@ -42,9 +43,7 @@ namespace SoulsSaveManager
         private void NewBackup_Click(object sender, RoutedEventArgs e)
         {
             string nameBackup = NewBackupTextBox.Text;
-            string user = UsersComboBox.Text.Split(" - ")[0];
-            string sourcePath = $"\\Users\\{Environment.UserName}\\AppData\\Roaming\\{_gameName}\\{user}";
-            string targetPath = $".\\{_gameName}\\{user}\\{nameBackup}";
+            string targetPath = $"{_userBackupPath}\\{nameBackup}";
             if (string.IsNullOrEmpty(nameBackup))
             {
                 MessageBox.Show("Backup's name is empty", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -54,7 +53,7 @@ namespace SoulsSaveManager
                 if (!Directory.Exists(targetPath))
                 {
                     Directory.CreateDirectory(targetPath);
-                    foreach (string? file in Directory.GetFiles(sourcePath))
+                    foreach (string? file in Directory.GetFiles(_userSaveDataPath))
                     {
                         string targetFile = $"{targetPath}\\{file.Split("\\").Last()}";
                         File.Copy(file, targetFile);
@@ -72,14 +71,13 @@ namespace SoulsSaveManager
 
         private void LoadBackup_Click(object sender, RoutedEventArgs e)
         {
-            string user = UsersComboBox.Text.Split(" - ")[0];
-            string sourcePath = $".\\{_gameName}\\{user}\\{BackupsComboBox.Text}";
-            string targetPath = $"\\Users\\{Environment.UserName}\\AppData\\Roaming\\{_gameName}\\{user}";
-            if (!Directory.Exists(targetPath))
-                Directory.CreateDirectory(targetPath);
+            string nameBackup = BackupsComboBox.Text;
+            string sourcePath = $"{_userBackupPath}\\{nameBackup}";
+            if (!Directory.Exists(_userSaveDataPath))
+                Directory.CreateDirectory(_userSaveDataPath);
             foreach (string? file in Directory.GetFiles(sourcePath))
             {
-                string targetFile = $"{targetPath}\\{file.Split("\\").Last()}";
+                string targetFile = $"{_userSaveDataPath}\\{file.Split("\\").Last()}";
                 File.Copy(file, targetFile, true);
             }
             MessageBox.Show("Done", "", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -88,32 +86,26 @@ namespace SoulsSaveManager
         private void LoadUsersComboBox()
         {
             List<string>? listUsers = new List<string>();
-            try
+            if (Directory.Exists(_game.SaveDataPath))
             {
-                foreach (var user in Directory.EnumerateDirectories($"/Users/{Environment.UserName}/AppData/Roaming/{_gameName}"))
+                foreach (var user in Directory.EnumerateDirectories(_game.SaveDataPath))
                 {
-                    string userID = user.Split("\\")[1];
+                    string userID = user.Split("\\").Last();
                     listUsers.Add(GetCompleteUser(userID));
                 }
-            }
-            catch
-            {
-                MessageBox.Show("Something unexpected happened", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             UsersComboBox.ItemsSource = listUsers;
         }
 
-        private void LoadBackupsComboBox(string userID = "")
+        private void LoadBackupsComboBox()
         {
             ObservableCollection<string>? listBackups = new ObservableCollection<string>();
             BackupsComboBox.ItemsSource = listBackups;
-            string user = string.IsNullOrEmpty(userID) ? UsersComboBox.Text.Split(" - ")[0] : userID;
-            string path = $".\\{_gameName}\\{user}";
             try
             {
-                if (Directory.Exists(path))
+                if (Directory.Exists(_userBackupPath))
                 {
-                    foreach (string? backup in Directory.EnumerateDirectories(path))
+                    foreach (string? backup in Directory.EnumerateDirectories(_userBackupPath))
                     {
                         listBackups.Add(backup.Split("\\").Last());
                     }
@@ -140,34 +132,16 @@ namespace SoulsSaveManager
             string userIDWeb = userIDOriginal;
             if (!long.TryParse(userIDOriginal, out _))
                 userIDWeb = long.Parse(userIDOriginal, System.Globalization.NumberStyles.HexNumber).ToString();
-            if (_gameName.Equals("DS1"))
+            if (_game.Alias.Equals("DS1"))
                 userIDWeb = $"[U:1:{userIDOriginal}]";
             return userIDWeb;
-        }
-
-        private static string SelectTitleGame(string gameSelected)
-        {
-            switch (gameSelected)
-            {
-                case "DS1":
-                    return "DarkSoulsRemastered";
-                case "DS2":
-                    return "DarkSoulsII";
-                case "DS3":
-                    return "DarkSoulsIII";
-                case "SKR":
-                    return "Sekiro";
-                case "ED":
-                    return "EldenRing";
-                default:
-                    return "";
-            }
         }
 
         private void UsersComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             System.Windows.Controls.ComboBox? senderTyped = (System.Windows.Controls.ComboBox)sender;
-            LoadBackupsComboBox(senderTyped.SelectedValue.ToString()?.Split(" - ")[0] ?? "");
+            _selectedUserComboBox = senderTyped.SelectedValue.ToString()?.Split(" - ")[0] ?? "";
+            LoadBackupsComboBox();
         }
     }
 }
