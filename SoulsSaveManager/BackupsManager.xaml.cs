@@ -98,6 +98,8 @@
         {
             System.Windows.Controls.ComboBox? senderTyped = (System.Windows.Controls.ComboBox)sender;
             _selectedUserComboBox = senderTyped.SelectedValue.ToString()?.Split(" - ")[0] ?? "";
+            _userBackupPath = $"{_game.BackupPath}\\{_selectedUserComboBox}";
+            _userSaveDataPath = $"{_game.SaveDataPath}\\{_selectedUserComboBox}";
             _utils.LoadBackupsComboBox(BackupsComboBox, _userBackupPath);
         }
     }
