@@ -83,6 +83,15 @@
             MessageBox.Show("Done", "", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
+        private void DeleteBackup_Click(object sender, RoutedEventArgs e)
+        {
+            string nameBackup = BackupsComboBox.Text;
+            string sourcePath = $"{_userBackupPath}\\{nameBackup}";
+            Directory.Delete(sourcePath, true);
+            MessageBox.Show("Done", "", MessageBoxButton.OK, MessageBoxImage.Information);
+            LoadBackupsComboBox();
+        }
+
         private void LoadUsersComboBox()
         {
             List<string>? listUsers = new List<string>();

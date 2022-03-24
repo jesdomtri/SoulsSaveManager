@@ -38,7 +38,15 @@
 
             <ComboBox x:Name="BackupsComboBox" Margin="50,221,0,0" Width="290" HorizontalAlignment="Left" Height="38" VerticalAlignment="Top" FontFamily="Cascadia Code" FontSize="14" VerticalContentAlignment="Center"/>
 
-            <Button x:Name="LoadBackupButton" Content="Load backup" FontFamily="Cascadia Code" TextBlock.TextAlignment="Center" Height="auto" Padding="10" Click="LoadBackup_Click" FontSize="14" Width="200" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="350,221,0,0" Background="#FFE74C3C">
+            <Button x:Name="LoadBackupButton_Copy" Content="Load" FontFamily="Cascadia Code" TextBlock.TextAlignment="Center" Height="auto" Padding="10" Click="LoadBackup_Click" FontSize="14" Width="100" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="350,221,0,0" Background="#FFF1C40F">
+                <Button.Resources>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="CornerRadius" Value="7"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+
+            <Button x:Name="DeleteBackupButton" Content="Delete" FontFamily="Cascadia Code" TextBlock.TextAlignment="Center" Height="auto" Padding="10" Click="DeleteBackup_Click" FontSize="14" Width="100" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="450,221,0,0" Background="#FFE74C3C">
                 <Button.Resources>
                     <Style TargetType="{x:Type Border}">
                         <Setter Property="CornerRadius" Value="7"/>
