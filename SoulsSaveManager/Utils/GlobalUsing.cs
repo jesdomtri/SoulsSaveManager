@@ -1,5 +1,6 @@
 ﻿global using System.Windows;
 global using SoulsSaveManager.Entities;
+global using SoulsSaveManager.Utils;
 global using System;
 global using System.Collections.Generic;
 global using System.IO;

@@ -4,6 +4,7 @@
     {
         private MainWindow _mainWindow;
         private Game _game;
+        private UtilsClass _utils;
         private string _selectedUserComboBox;
         private string _userSaveDataPath;
         private string _userBackupPath;
@@ -11,14 +12,15 @@
         {
             _mainWindow = mainWindow;
             _game = game;
+            _utils = new UtilsClass(game);
 
             InitializeComponent();
-            LoadUsersComboBox();
+            UsersComboBox.ItemsSource = _utils.LoadUsersComboBox();
 
             _userBackupPath = $"{_game.BackupPath}\\{_selectedUserComboBox}";
             _userSaveDataPath = $"{_game.SaveDataPath}\\{_selectedUserComboBox}";
 
-            LoadBackupsComboBox();
+            _utils.LoadBackupsComboBox(BackupsComboBox, _userBackupPath);
 
             _selectedUserComboBox = UsersComboBox.Text.Split(" - ")[0];
         }
@@ -60,7 +62,7 @@
                     }
                     NewBackupTextBox.Clear();
                     MessageBox.Show("Done", "", MessageBoxButton.OK, MessageBoxImage.Information);
-                    LoadBackupsComboBox();
+                    _utils.LoadBackupsComboBox(BackupsComboBox, _userBackupPath);
                 }
                 else
                 {
@@ -89,68 +91,14 @@
             string sourcePath = $"{_userBackupPath}\\{nameBackup}";
             Directory.Delete(sourcePath, true);
             MessageBox.Show("Done", "", MessageBoxButton.OK, MessageBoxImage.Information);
-            LoadBackupsComboBox();
+            _utils.LoadBackupsComboBox(BackupsComboBox, _userBackupPath);
         }
 
-        private void LoadUsersComboBox()
-        {
-            List<string>? listUsers = new List<string>();
-            if (Directory.Exists(_game.SaveDataPath))
-            {
-                foreach (var user in Directory.EnumerateDirectories(_game.SaveDataPath))
-                {
-                    string userID = user.Split("\\").Last();
-                    listUsers.Add(GetCompleteUser(userID));
-                }
-            }
-            UsersComboBox.ItemsSource = listUsers;
-        }
-
-        private void LoadBackupsComboBox()
-        {
-            ObservableCollection<string>? listBackups = new ObservableCollection<string>();
-            BackupsComboBox.ItemsSource = listBackups;
-            try
-            {
-                if (Directory.Exists(_userBackupPath))
-                {
-                    foreach (string? backup in Directory.EnumerateDirectories(_userBackupPath))
-                    {
-                        listBackups.Add(backup.Split("\\").Last());
-                    }
-                }
-            }
-            catch
-            {
-                MessageBox.Show("Something unexpected happened", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-            BackupsComboBox.ItemsSource = listBackups;
-            BackupsComboBox.SelectedIndex = 0;
-        }
-
-        private string GetCompleteUser(string userID)
-        {
-            HtmlWeb oWeb = new HtmlWeb();
-            HtmlDocument doc = oWeb.Load($"https://steamcommunity.com/profiles/{GetUserIDWeb(userID)}/");
-            string username = doc.DocumentNode.Descendants("span").Where(node => node.GetAttributeValue("class", "").Contains("actual_persona_name")).ToList()[0].InnerHtml;
-            return !string.IsNullOrEmpty(username) ? $"{userID} - {username}" : userID;
-        }
-
-        private string GetUserIDWeb(string userIDOriginal)
-        {
-            string userIDWeb = userIDOriginal;
-            if (!long.TryParse(userIDOriginal, out _))
-                userIDWeb = long.Parse(userIDOriginal, System.Globalization.NumberStyles.HexNumber).ToString();
-            if (_game.Alias.Equals("DS1"))
-                userIDWeb = $"[U:1:{userIDOriginal}]";
-            return userIDWeb;
-        }
-
-        private void UsersComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        public void UsersComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             System.Windows.Controls.ComboBox? senderTyped = (System.Windows.Controls.ComboBox)sender;
             _selectedUserComboBox = senderTyped.SelectedValue.ToString()?.Split(" - ")[0] ?? "";
-            LoadBackupsComboBox();
+            _utils.LoadBackupsComboBox(BackupsComboBox, _userBackupPath);
         }
     }
 }
