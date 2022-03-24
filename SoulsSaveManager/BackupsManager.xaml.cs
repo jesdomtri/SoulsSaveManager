@@ -33,9 +33,9 @@ namespace SoulsSaveManager
                 string user = UsersComboBox.Text.Split(" - ")[0];
                 Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", $"\\Users\\{Environment.UserName}\\AppData\\Roaming\\{_gameName}\\{user}");
             }
-            catch (Exception)
+            catch
             {
-
+                MessageBox.Show("Something unexpected happened", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -75,25 +75,14 @@ namespace SoulsSaveManager
             string user = UsersComboBox.Text.Split(" - ")[0];
             string sourcePath = $".\\{_gameName}\\{user}\\{BackupsComboBox.Text}";
             string targetPath = $"\\Users\\{Environment.UserName}\\AppData\\Roaming\\{_gameName}\\{user}";
-            if (Directory.Exists(targetPath))
-            {
-                foreach (string? file in Directory.GetFiles(sourcePath))
-                {
-                    string targetFile = $"{targetPath}\\{file.Split("\\").Last()}";
-                    File.Copy(file, targetFile, true);
-                }
-                MessageBox.Show("Done", "", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            else
-            {
+            if (!Directory.Exists(targetPath))
                 Directory.CreateDirectory(targetPath);
-                foreach (string? file in Directory.GetFiles(sourcePath))
-                {
-                    string targetFile = $"{targetPath}\\{file.Split("\\").Last()}";
-                    File.Copy(file, targetFile, true);
-                }
-                MessageBox.Show("Done", "", MessageBoxButton.OK, MessageBoxImage.Information);
+            foreach (string? file in Directory.GetFiles(sourcePath))
+            {
+                string targetFile = $"{targetPath}\\{file.Split("\\").Last()}";
+                File.Copy(file, targetFile, true);
             }
+            MessageBox.Show("Done", "", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void LoadUsersComboBox()
@@ -107,9 +96,9 @@ namespace SoulsSaveManager
                     listUsers.Add(GetCompleteUser(userID));
                 }
             }
-            catch (Exception)
+            catch
             {
-
+                MessageBox.Show("Something unexpected happened", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             UsersComboBox.ItemsSource = listUsers;
         }
@@ -130,9 +119,9 @@ namespace SoulsSaveManager
                     }
                 }
             }
-            catch (Exception)
+            catch
             {
-
+                MessageBox.Show("Something unexpected happened", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             BackupsComboBox.ItemsSource = listBackups;
             BackupsComboBox.SelectedIndex = 0;
@@ -140,22 +129,23 @@ namespace SoulsSaveManager
 
         private string GetCompleteUser(string userID)
         {
-            HtmlWeb oweb = new HtmlWeb();
-            HtmlDocument doc = oweb.Load($"https://steamcommunity.com/profiles/{GetUserIDHex(userID)}/");
+            HtmlWeb oWeb = new HtmlWeb();
+            HtmlDocument doc = oWeb.Load($"https://steamcommunity.com/profiles/{GetUserIDWeb(userID)}/");
             string username = doc.DocumentNode.Descendants("span").Where(node => node.GetAttributeValue("class", "").Contains("actual_persona_name")).ToList()[0].InnerHtml;
             return !string.IsNullOrEmpty(username) ? $"{userID} - {username}" : userID;
         }
 
-        private long GetUserIDHex(string userID)
+        private string GetUserIDWeb(string userIDOriginal)
         {
-            long result;
-            var isDec = long.TryParse(userID, out result);
-            if (!isDec)
-                result = long.Parse(userID, System.Globalization.NumberStyles.HexNumber);
-            return result;
+            string userIDWeb = userIDOriginal;
+            if (!long.TryParse(userIDOriginal, out _))
+                userIDWeb = long.Parse(userIDOriginal, System.Globalization.NumberStyles.HexNumber).ToString();
+            if (_gameName.Equals("DS1"))
+                userIDWeb = $"[U:1:{userIDOriginal}]";
+            return userIDWeb;
         }
 
-        private string SelectTitleGame(string gameSelected)
+        private static string SelectTitleGame(string gameSelected)
         {
             switch (gameSelected)
             {
