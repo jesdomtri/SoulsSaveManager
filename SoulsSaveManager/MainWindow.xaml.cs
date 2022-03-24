@@ -1,4 +1,7 @@
-﻿namespace SoulsSaveManager
+﻿using System.Threading;
+using System.Threading.Tasks;
+
+namespace SoulsSaveManager
 {
     public partial class MainWindow : Window
     {

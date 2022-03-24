@@ -15,7 +15,7 @@
             _utils = new UtilsClass(game);
 
             InitializeComponent();
-            UsersComboBox.ItemsSource = _utils.LoadUsersComboBox();
+            _utils.LoadUsersComboBox(ref UsersComboBox);
 
             _userBackupPath = $"{_game.BackupPath}\\{_selectedUserComboBox}";
             _userSaveDataPath = $"{_game.SaveDataPath}\\{_selectedUserComboBox}";

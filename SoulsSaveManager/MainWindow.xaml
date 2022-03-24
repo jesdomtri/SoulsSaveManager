@@ -17,6 +17,7 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="10px"/>
         </Grid.RowDefinitions>
         <Button Name="DS1" Grid.Row="0" Grid.Column="0" Height="125" Width="125" TextBlock.TextAlignment="Center" Click="ClickSelectGame" BorderBrush="{x:Null}" Background="{x:Null}">
             <Image Source="/Resource/dsicon.png"/>
@@ -33,5 +34,6 @@
         <Button Name="ED" Grid.Row="0" Grid.Column="4" Height="125" Width="125" TextBlock.TextAlignment="Center" Click="ClickSelectGame" BorderBrush="{x:Null}"  Background="{x:Null}">
             <Image Source="/Resource/edicon.png"/>
         </Button>
+        <ProgressBar Minimum="0" Maximum="100" Name="pb" IsIndeterminate="True" Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="1" Visibility="Hidden"/>
     </Grid>
 </Window>

@@ -3,23 +3,41 @@
     public class UtilsClass
     {
         private Game _game;
+        private List<string>? _listUsers;
+        private bool _finishedThread;
         public UtilsClass(Game game)
         {
             _game = game;
         }
 
-        public List<string>? LoadUsersComboBox()
+        public void LoadUsersComboBox(ref System.Windows.Controls.ComboBox usersComboBox)
         {
-            List<string>? listUsers = new List<string>();
+            BackgroundWorker backgroundWorker = new BackgroundWorker();
+            backgroundWorker.DoWork += BackgroundWorker_DoWork;
+            backgroundWorker.RunWorkerAsync();
+            while (backgroundWorker.IsBusy)
+            {
+                if (_finishedThread)
+                {
+                    backgroundWorker.Dispose();
+                    break;
+                }
+            }
+            usersComboBox.ItemsSource = _listUsers;
+        }
+
+        private void BackgroundWorker_DoWork(object? sender, DoWorkEventArgs e)
+        {
+            _listUsers = new List<string>();
             if (Directory.Exists(_game.SaveDataPath))
             {
                 foreach (var user in Directory.EnumerateDirectories(_game.SaveDataPath))
                 {
                     string userID = user.Split("\\").Last();
-                    listUsers.Add(GetCompleteUser(userID));
+                    _listUsers.Add(GetCompleteUser(userID));
                 }
             }
-            return listUsers;
+            _finishedThread = true;
         }
 
         public void LoadBackupsComboBox(System.Windows.Controls.ComboBox backupsComboBox, string userBackupPath)
