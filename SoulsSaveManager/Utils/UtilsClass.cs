@@ -11,12 +11,19 @@
         public List<string>? LoadUsersComboBox()
         {
             List<string>? listUsers = new List<string>();
-            if (Directory.Exists(_game.SaveDataPath))
+            if (_game.Alias.Equals("DM"))
             {
-                foreach (var user in Directory.EnumerateDirectories(_game.SaveDataPath))
+                listUsers.Add("NOT USER FOR DEMON SOULS IN RPCS3");
+            }
+            else
+            {
+                if (Directory.Exists(_game.SaveDataPath))
                 {
-                    string userID = user.Split("\\").Last();
-                    listUsers.Add(GetCompleteUser(userID));
+                    foreach (var user in Directory.EnumerateDirectories(_game.SaveDataPath))
+                    {
+                        string userID = user.Split("\\").Last();
+                        listUsers.Add(GetCompleteUser(userID));
+                    }
                 }
             }
             return listUsers;
@@ -37,7 +44,7 @@
             }
             catch
             {
-                MessageBox.Show("Something unexpected happened", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Windows.MessageBox.Show("Something unexpected happened", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             backupsComboBox.ItemsSource = listBackups;
             backupsComboBox.SelectedIndex = 0;
@@ -46,7 +53,7 @@
         public string GetCompleteUser(string userID)
         {
             HtmlWeb oWeb = new HtmlWeb();
-            HtmlDocument doc = oWeb.Load($"https://steamcommunity.com/profiles/{GetUserIDWeb(userID)}/");
+            HtmlAgilityPack.HtmlDocument doc = oWeb.Load($"https://steamcommunity.com/profiles/{GetUserIDWeb(userID)}/");
             string username = doc.DocumentNode.Descendants("span").Where(node => node.GetAttributeValue("class", "").Contains("actual_persona_name")).ToList()[0].InnerHtml;
             return !string.IsNullOrEmpty(username) ? $"{userID} - {username}" : userID;
         }

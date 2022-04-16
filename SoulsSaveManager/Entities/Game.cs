@@ -6,9 +6,7 @@
         {
             Alias = alias;
             Name = SelectTitleGame(alias);
-            SaveDataPath = (Alias.Equals("DS1") ?
-                $"\\Users\\{Environment.UserName}\\Documents\\NBGI\\{Name}" :
-                $"\\Users\\{Environment.UserName}\\AppData\\Roaming\\{Name}");
+            SaveDataPath = SelectLocationGame(alias, Name);
             BackupPath = $".\\Backups\\{Name}";
         }
 
@@ -31,8 +29,23 @@
                     return "Sekiro";
                 case "ED":
                     return "EldenRing";
+                case "DM":
+                    return "DemonSouls";
                 default:
                     return "";
+            }
+        }
+
+        private static string SelectLocationGame(string gameSelected, string name)
+        {
+            switch (gameSelected)
+            {
+                case "DS1":
+                    return $"\\Users\\{Environment.UserName}\\Documents\\NBGI\\{name}";
+                case "DM":
+                    return "";
+                default:
+                    return $"\\Users\\{Environment.UserName}\\AppData\\Roaming\\{name}";
             }
         }
     }

@@ -6,9 +6,10 @@
         mc:Ignorable="d"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen"
-        Title="SoulsSaveManager" Height="200" Width="700" Background="#FF202121">
+        Title="SoulsSaveManager" Height="200" Width="900" Background="#FF202121">
     <Grid Name="GridSelectGame" Margin="0,0,0,0">
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
@@ -32,6 +33,9 @@
         </Button>
         <Button Name="ED" Grid.Row="0" Grid.Column="4" Height="125" Width="125" TextBlock.TextAlignment="Center" Click="ClickSelectGame" BorderBrush="{x:Null}"  Background="{x:Null}">
             <Image Source="/Resource/edicon.png"/>
+        </Button>
+        <Button Name="DM" Grid.Row="0" Grid.Column="5" Height="125" Width="125" TextBlock.TextAlignment="Center" Click="ClickSelectGame" BorderBrush="{x:Null}"  Background="{x:Null}">
+            <Image Source="/Resource/dmicon.png"/>
         </Button>
     </Grid>
 </Window>

@@ -16,9 +16,13 @@
 
             InitializeComponent();
             UsersComboBox.ItemsSource = _utils.LoadUsersComboBox();
+            if (_game.Alias.Equals("DM"))
+                UsersComboBox.IsEnabled = false;
 
             _userBackupPath = $"{_game.BackupPath}\\{_selectedUserComboBox}";
             _userSaveDataPath = $"{_game.SaveDataPath}\\{_selectedUserComboBox}";
+
+            SaveLocationTextBox.Text = _game.Alias.Equals("DM") ? "Select save location pls" : _userSaveDataPath;
 
             _utils.LoadBackupsComboBox(BackupsComboBox, _userBackupPath);
 
@@ -34,11 +38,64 @@
         {
             try
             {
-                Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", _userSaveDataPath);
+                if (Directory.Exists(_userSaveDataPath))
+                {
+                    Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", _userSaveDataPath);
+                }
+                else
+                {
+                    System.Windows.MessageBox.Show("This location doesn't exist", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
             }
             catch
             {
-                MessageBox.Show("Something unexpected happened", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Windows.MessageBox.Show("Something unexpected happened", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void OpenBackupLocation_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (Directory.Exists(_userSaveDataPath))
+                {
+                    Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", _userBackupPath);
+                }
+                else
+                {
+                    System.Windows.MessageBox.Show("This location doesn't exist", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            catch
+            {
+                System.Windows.MessageBox.Show("Something unexpected happened", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void SelectSaveLocation_Click(object sender, RoutedEventArgs e)
+        {
+            using (var fbd = new FolderBrowserDialog())
+            {
+                DialogResult result = fbd.ShowDialog();
+                if (result == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
+                {
+                    SaveLocationTextBox.Text = fbd.SelectedPath;
+                    _userSaveDataPath = fbd.SelectedPath;
+                }
+            }
+        }
+
+        private void ResetSaveLocation_Click(object sender, RoutedEventArgs e)
+        {
+            if (!_game.Alias.Equals("DM"))
+            {
+                _userSaveDataPath = $"{_game.SaveDataPath}\\{_selectedUserComboBox}";
+                SaveLocationTextBox.Text = $"{_game.SaveDataPath}\\{_selectedUserComboBox}";
+            }
+            else
+            {
+                _userSaveDataPath = "";
+                SaveLocationTextBox.Clear();
             }
         }
 
@@ -46,28 +103,35 @@
         {
             string nameBackup = NewBackupTextBox.Text;
             string targetPath = $"{_userBackupPath}\\{nameBackup}";
-            if (string.IsNullOrEmpty(nameBackup))
+            if (Directory.Exists(_userSaveDataPath))
             {
-                MessageBox.Show("Backup's name is empty", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
-            else
-            {
-                if (!Directory.Exists(targetPath))
+                if (string.IsNullOrEmpty(nameBackup))
                 {
-                    Directory.CreateDirectory(targetPath);
-                    foreach (string? file in Directory.GetFiles(_userSaveDataPath))
-                    {
-                        string targetFile = $"{targetPath}\\{file.Split("\\").Last()}";
-                        File.Copy(file, targetFile);
-                    }
-                    NewBackupTextBox.Clear();
-                    MessageBox.Show("Done", "", MessageBoxButton.OK, MessageBoxImage.Information);
-                    _utils.LoadBackupsComboBox(BackupsComboBox, _userBackupPath);
+                    System.Windows.MessageBox.Show("Backup's name is empty", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
                 else
                 {
-                    MessageBox.Show("There are already this backup", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    if (!Directory.Exists(targetPath))
+                    {
+                        Directory.CreateDirectory(targetPath);
+                        foreach (string? file in Directory.GetFiles(_userSaveDataPath))
+                        {
+                            string targetFile = $"{targetPath}\\{file.Split("\\").Last()}";
+                            File.Copy(file, targetFile);
+                        }
+                        NewBackupTextBox.Clear();
+                        System.Windows.MessageBox.Show("Done", "", MessageBoxButton.OK, MessageBoxImage.Information);
+                        _utils.LoadBackupsComboBox(BackupsComboBox, _userBackupPath);
+                    }
+                    else
+                    {
+                        System.Windows.MessageBox.Show("This backup already exists", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
+            }
+            else
+            {
+                System.Windows.MessageBox.Show("The save location doesn't exist", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 
@@ -82,7 +146,7 @@
                 string targetFile = $"{_userSaveDataPath}\\{file.Split("\\").Last()}";
                 File.Copy(file, targetFile, true);
             }
-            MessageBox.Show("Done", "", MessageBoxButton.OK, MessageBoxImage.Information);
+            System.Windows.MessageBox.Show("Done", "", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void DeleteBackup_Click(object sender, RoutedEventArgs e)
@@ -90,7 +154,7 @@
             string nameBackup = BackupsComboBox.Text;
             string sourcePath = $"{_userBackupPath}\\{nameBackup}";
             Directory.Delete(sourcePath, true);
-            MessageBox.Show("Done", "", MessageBoxButton.OK, MessageBoxImage.Information);
+            System.Windows.MessageBox.Show("Done", "", MessageBoxButton.OK, MessageBoxImage.Information);
             _utils.LoadBackupsComboBox(BackupsComboBox, _userBackupPath);
         }
 
@@ -100,6 +164,7 @@
             _selectedUserComboBox = senderTyped.SelectedValue.ToString()?.Split(" - ")[0] ?? "";
             _userBackupPath = $"{_game.BackupPath}\\{_selectedUserComboBox}";
             _userSaveDataPath = $"{_game.SaveDataPath}\\{_selectedUserComboBox}";
+            SaveLocationTextBox.Text = _userSaveDataPath;
             _utils.LoadBackupsComboBox(BackupsComboBox, _userBackupPath);
         }
     }

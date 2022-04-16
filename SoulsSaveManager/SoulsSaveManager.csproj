@@ -5,6 +5,7 @@
 		<TargetFramework>net6.0-windows</TargetFramework>
 		<Nullable>enable</Nullable>
 		<UseWPF>true</UseWPF>
+		<UseWindowsForms>true</UseWindowsForms>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<RuntimeIdentifier>win10-x64</RuntimeIdentifier>
 		<IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
@@ -13,6 +14,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<None Remove="Resource\dmicon.png" />
 		<None Remove="Resource\ds2icon.png" />
 		<None Remove="Resource\ds3icon.png" />
 		<None Remove="Resource\dsicon.png" />
@@ -31,6 +33,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Resource Include="Resource\dmicon.png" />
 		<Resource Include="Resource\ds2icon.png" />
 		<Resource Include="Resource\ds3icon.png" />
 		<Resource Include="Resource\dsicon.png" />

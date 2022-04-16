@@ -8,3 +8,4 @@ global using HtmlAgilityPack;
 global using System.Linq;
 global using System.Diagnostics;
 global using System.Collections.ObjectModel;
+global using System.Windows.Forms;
