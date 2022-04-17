@@ -84,7 +84,7 @@
         {
             try
             {
-                string? appsettingsPath = Path.Combine(AppContext.BaseDirectory, "appSettings.json");
+                string? appsettingsPath = Path.Combine(Directory.GetCurrentDirectory(), "appSettings.json");
                 string json = File.ReadAllText(appsettingsPath);
                 dynamic jsonObj = Newtonsoft.Json.JsonConvert.DeserializeObject(json);
                 string? sectionPath = key.Split(":")[0];
