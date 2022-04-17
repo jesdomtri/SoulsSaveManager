@@ -52,10 +52,22 @@
 
         public string GetCompleteUser(string userID)
         {
-            HtmlWeb oWeb = new HtmlWeb();
-            HtmlAgilityPack.HtmlDocument doc = oWeb.Load($"https://steamcommunity.com/profiles/{GetUserIDWeb(userID)}/");
-            string username = doc.DocumentNode.Descendants("span").Where(node => node.GetAttributeValue("class", "").Contains("actual_persona_name")).ToList()[0].InnerHtml;
-            return !string.IsNullOrEmpty(username) ? $"{userID} - {username}" : userID;
+            string result = string.Empty;
+            bool exist = App.UsersCache != null ? App.UsersCache.ContainsKey(userID) : false;
+
+            if (exist)
+            {
+                result = App.UsersCache != null ? $"{userID} - {App.UsersCache[userID]}" : userID;
+            }
+            else
+            {
+                HtmlWeb oWeb = new();
+                HtmlAgilityPack.HtmlDocument doc = oWeb.Load($"https://steamcommunity.com/profiles/{GetUserIDWeb(userID)}/");
+                string username = doc.DocumentNode.Descendants("span").Where(node => node.GetAttributeValue("class", "").Contains("actual_persona_name")).ToList()[0].InnerHtml;
+                result = !string.IsNullOrEmpty(username) ? $"{userID} - {username}" : userID;
+                OverwriteUsersAppSettings($"users:{userID}", username);
+            }
+            return result;
         }
 
         public string GetUserIDWeb(string userIDOriginal)
@@ -66,6 +78,27 @@
             if (_game.Alias.Equals("DS1"))
                 userIDWeb = $"[U:1:{userIDOriginal}]";
             return userIDWeb;
+        }
+
+        public void OverwriteUsersAppSettings(string key, string value)
+        {
+            try
+            {
+                string? appsettingsPath = Path.Combine(AppContext.BaseDirectory, "appSettings.json");
+                string json = File.ReadAllText(appsettingsPath);
+                dynamic jsonObj = Newtonsoft.Json.JsonConvert.DeserializeObject(json);
+                string? sectionPath = key.Split(":")[0];
+                string? keyPath = key.Split(":")[1];
+                jsonObj[sectionPath][keyPath] = value;
+                string output = Newtonsoft.Json.JsonConvert.SerializeObject(jsonObj, Newtonsoft.Json.Formatting.Indented);
+                File.WriteAllText(appsettingsPath, output);
+                App.UsersCache = App.Configuration?.GetSection("users").Get<Dictionary<string, string>>();
+                App.LocationsCache = App.Configuration?.GetSection("locations").Get<Dictionary<string, string>>();
+            }
+            catch (Exception)
+            {
+                System.Windows.MessageBox.Show("Something unexpected happened", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }

@@ -15,6 +15,7 @@
             _utils = new UtilsClass(game);
 
             InitializeComponent();
+
             UsersComboBox.ItemsSource = _utils.LoadUsersComboBox();
             if (_game.Alias.Equals("DM"))
                 UsersComboBox.IsEnabled = false;
@@ -22,7 +23,7 @@
             _userBackupPath = $"{_game.BackupPath}\\{_selectedUserComboBox}";
             _userSaveDataPath = $"{_game.SaveDataPath}\\{_selectedUserComboBox}";
 
-            SaveLocationTextBox.Text = _game.Alias.Equals("DM") ? "Select save location pls" : _userSaveDataPath;
+            SaveLocationTextBox.Text = _game.Alias.Equals("DM") ? App.LocationsCache["DM"] : _userSaveDataPath;
 
             _utils.LoadBackupsComboBox(BackupsComboBox, _userBackupPath);
 
@@ -81,6 +82,8 @@
                 {
                     SaveLocationTextBox.Text = fbd.SelectedPath;
                     _userSaveDataPath = fbd.SelectedPath;
+                    if (_game.Alias.Equals("DM"))
+                        _utils.OverwriteUsersAppSettings($"locations:{_game.Alias}", fbd.SelectedPath);
                 }
             }
         }

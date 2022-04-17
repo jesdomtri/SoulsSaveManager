@@ -9,3 +9,6 @@ global using System.Linq;
 global using System.Diagnostics;
 global using System.Collections.ObjectModel;
 global using System.Windows.Forms;
+global using Microsoft.Extensions.Configuration;
+global using Microsoft.Extensions.DependencyInjection;
+global using System.Text.Json;
