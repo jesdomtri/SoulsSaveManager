@@ -9,12 +9,14 @@
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            CreateAppSettings();
+
             IConfigurationBuilder? builder = new ConfigurationBuilder()
              .SetBasePath(Directory.GetCurrentDirectory())
              .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 
             Configuration = builder.Build();
-            
+
             UsersCache = Configuration?.GetSection("users").Get<Dictionary<string, string>>();
             LocationsCache = Configuration?.GetSection("locations").Get<Dictionary<string, string>>();
 
@@ -22,14 +24,20 @@
             ConfigureServices(serviceCollection);
 
             ServiceProvider = serviceCollection.BuildServiceProvider();
-
-            MainWindow? mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
-            mainWindow.Show();
         }
 
         private void ConfigureServices(IServiceCollection services)
         {
             services.AddTransient(typeof(MainWindow));
+        }
+
+        private void CreateAppSettings()
+        {
+            if (!File.Exists($"{Directory.GetCurrentDirectory()}\\appsettings.json"))
+            {
+                string json = @"{""users"": {},""locations"": {""DM"": ""Select save location pls""}}";
+                File.WriteAllText($"{Directory.GetCurrentDirectory()}\\appsettings.json", json);
+            }
         }
     }
 }
