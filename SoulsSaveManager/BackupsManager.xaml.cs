@@ -144,18 +144,19 @@
         {
             string nameBackup = BackupsComboBox.Text;
             string sourcePath = $"{_userBackupPath}\\{nameBackup}";
-            if (!Directory.Exists(_userSaveDataPath))
+            string targetPath = string.IsNullOrEmpty(SaveLocationTextBox.Text) ? _userSaveDataPath : SaveLocationTextBox.Text;
+            if (!Directory.Exists(targetPath))
             {
-                Directory.CreateDirectory(_userSaveDataPath);
+                Directory.CreateDirectory(targetPath);
             }
             else
             {
-                Directory.Delete(_userSaveDataPath, true);
-                Directory.CreateDirectory(_userSaveDataPath);
+                Directory.Delete(targetPath, true);
+                Directory.CreateDirectory(targetPath);
             }
             foreach (string? file in Directory.GetFiles(sourcePath))
             {
-                string targetFile = $"{_userSaveDataPath}\\{file.Split("\\").Last()}";
+                string targetFile = $"{targetPath}\\{file.Split("\\").Last()}";
                 File.Copy(file, targetFile, true);
             }
             System.Windows.MessageBox.Show("Done", "", MessageBoxButton.OK, MessageBoxImage.Information);
