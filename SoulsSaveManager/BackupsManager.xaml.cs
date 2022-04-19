@@ -37,11 +37,12 @@
 
         private void OpenSaveLocation_Click(object sender, RoutedEventArgs e)
         {
+            string savePath = string.IsNullOrEmpty(SaveLocationTextBox.Text) ? _userSaveDataPath : SaveLocationTextBox.Text;
             try
             {
-                if (Directory.Exists(_userSaveDataPath))
+                if (Directory.Exists(savePath))
                 {
-                    Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", _userSaveDataPath);
+                    Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", savePath);
                 }
                 else
                 {
@@ -58,7 +59,7 @@
         {
             try
             {
-                if (Directory.Exists(_userSaveDataPath))
+                if (Directory.Exists(_userBackupPath))
                 {
                     Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", _userBackupPath);
                 }
@@ -105,7 +106,7 @@
         private void NewBackup_Click(object sender, RoutedEventArgs e)
         {
             string nameBackup = NewBackupTextBox.Text;
-            string targetPath = $"{_userBackupPath}\\{nameBackup}";
+            string targetPath = string.IsNullOrEmpty(SaveLocationTextBox.Text) ? $"{_userBackupPath}\\{nameBackup}" : $"{SaveLocationTextBox.Text}\\{nameBackup}";
             if (Directory.Exists(_userSaveDataPath))
             {
                 if (string.IsNullOrEmpty(nameBackup))
@@ -143,7 +144,14 @@
             string nameBackup = BackupsComboBox.Text;
             string sourcePath = $"{_userBackupPath}\\{nameBackup}";
             if (!Directory.Exists(_userSaveDataPath))
+            {
                 Directory.CreateDirectory(_userSaveDataPath);
+            }
+            else
+            {
+                Directory.Delete(_userSaveDataPath, true);
+                Directory.CreateDirectory(_userSaveDataPath);
+            }
             foreach (string? file in Directory.GetFiles(sourcePath))
             {
                 string targetFile = $"{_userSaveDataPath}\\{file.Split("\\").Last()}";
