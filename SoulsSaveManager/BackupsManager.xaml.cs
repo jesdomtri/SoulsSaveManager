@@ -106,8 +106,9 @@
         private void NewBackup_Click(object sender, RoutedEventArgs e)
         {
             string nameBackup = NewBackupTextBox.Text;
-            string targetPath = string.IsNullOrEmpty(SaveLocationTextBox.Text) ? $"{_userBackupPath}\\{nameBackup}" : $"{SaveLocationTextBox.Text}\\{nameBackup}";
-            if (Directory.Exists(_userSaveDataPath))
+            string targetPath = $"{_userBackupPath}\\{nameBackup}";
+            string sourcePath = string.IsNullOrEmpty(SaveLocationTextBox.Text) ? $"{_userBackupPath}\\{nameBackup}" : SaveLocationTextBox.Text;
+            if (Directory.Exists(sourcePath))
             {
                 if (string.IsNullOrEmpty(nameBackup))
                 {
@@ -118,7 +119,7 @@
                     if (!Directory.Exists(targetPath))
                     {
                         Directory.CreateDirectory(targetPath);
-                        foreach (string? file in Directory.GetFiles(_userSaveDataPath))
+                        foreach (string? file in Directory.GetFiles(sourcePath))
                         {
                             string targetFile = $"{targetPath}\\{file.Split("\\").Last()}";
                             File.Copy(file, targetFile);
