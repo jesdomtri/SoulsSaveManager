@@ -33,10 +33,11 @@
 
         private void CreateAppSettings()
         {
-            if (!File.Exists($"{Directory.GetCurrentDirectory()}\\appsettings.json"))
+            string filePath = Path.Combine(Directory.GetCurrentDirectory(), "appsettings.json");
+            if (!File.Exists(filePath))
             {
                 string json = @"{""users"": {},""locations"": {""DM"": ""Select save location pls""}}";
-                File.WriteAllText($"{Directory.GetCurrentDirectory()}\\appsettings.json", json);
+                File.WriteAllText(filePath, json);
             }
         }
     }

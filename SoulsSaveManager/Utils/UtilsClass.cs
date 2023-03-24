@@ -8,77 +8,84 @@
             _game = game;
         }
 
-        public List<string>? LoadUsersComboBox()
+        public List<string> LoadUsersComboBox()
         {
-            List<string>? listUsers = new List<string>();
             if (_game.Alias.Equals("DM"))
             {
-                listUsers.Add("NOT USER FOR DEMON SOULS IN RPCS3");
+                return new List<string> { "NOT USER FOR DEMON SOULS IN RPCS3" };
             }
-            else
+
+            try
             {
-                if (Directory.Exists(_game.SaveDataPath))
-                {
-                    foreach (var user in Directory.EnumerateDirectories(_game.SaveDataPath))
-                    {
-                        string userID = user.Split("\\").Last();
-                        listUsers.Add(GetCompleteUser(userID));
-                    }
-                }
+                var directories = Directory.EnumerateDirectories(_game.SaveDataPath);
+                return directories.Select(user => GetCompleteUser(user.Split("\\").Last())).ToList();
             }
-            return listUsers;
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show($"Something unexpected happened: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return new List<string>();
+            }
         }
 
-        public void LoadBackupsComboBox(System.Windows.Controls.ComboBox backupsComboBox, string userBackupPath)
+
+        public static void LoadBackupsComboBox(System.Windows.Controls.ComboBox backupsComboBox, string userBackupPath)
         {
-            ObservableCollection<string>? listBackups = new ObservableCollection<string>();
             try
             {
                 if (Directory.Exists(userBackupPath))
                 {
-                    foreach (string? backup in Directory.EnumerateDirectories(userBackupPath))
-                    {
-                        listBackups.Add(backup.Split("\\").Last());
-                    }
+                    var listBackups = Directory.EnumerateDirectories(userBackupPath).Select(backup => backup.Split("\\").Last());
+                    backupsComboBox.ItemsSource = new ObservableCollection<string>(listBackups);
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                System.Windows.MessageBox.Show("Something unexpected happened", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Windows.MessageBox.Show($"Something unexpected happened: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-            backupsComboBox.ItemsSource = listBackups;
-            backupsComboBox.SelectedIndex = 0;
+
+            if (backupsComboBox.HasItems)
+            {
+                backupsComboBox.SelectedIndex = 0;
+            }
         }
 
         public string GetCompleteUser(string userID)
         {
-            string result = string.Empty;
-            bool exist = App.UsersCache != null ? App.UsersCache.ContainsKey(userID) : false;
+            if (App.UsersCache != null && App.UsersCache.TryGetValue(userID, out string cachedUsername))
+            {
+                return $"{userID} - {cachedUsername}";
+            }
 
-            if (exist)
+            HtmlWeb oWeb = new HtmlWeb();
+            HtmlAgilityPack.HtmlDocument doc = oWeb.Load($"https://steamcommunity.com/profiles/{GetUserIDWeb(userID)}/");
+            string? username = doc.DocumentNode.Descendants("span").FirstOrDefault(node => node.GetAttributeValue("class", "").Contains("actual_persona_name"))?.InnerHtml;
+
+            if (string.IsNullOrEmpty(username))
             {
-                result = App.UsersCache != null ? $"{userID} - {App.UsersCache[userID]}" : userID;
+                username = userID;
             }
-            else
-            {
-                HtmlWeb oWeb = new();
-                HtmlAgilityPack.HtmlDocument doc = oWeb.Load($"https://steamcommunity.com/profiles/{GetUserIDWeb(userID)}/");
-                string username = doc.DocumentNode.Descendants("span").Where(node => node.GetAttributeValue("class", "").Contains("actual_persona_name")).ToList()[0].InnerHtml;
-                result = !string.IsNullOrEmpty(username) ? $"{userID} - {username}" : userID;
-                OverwriteUsersAppSettings($"users:{userID}", username);
-            }
-            return result;
+
+            OverwriteUsersAppSettings($"users:{userID}", username);
+
+            return $"{userID} - {username}";
         }
 
         public string GetUserIDWeb(string userIDOriginal)
         {
-            string userIDWeb = userIDOriginal;
-            if (!long.TryParse(userIDOriginal, out _))
-                userIDWeb = long.Parse(userIDOriginal, System.Globalization.NumberStyles.HexNumber).ToString();
-            if (_game.Alias.Equals("DS1"))
-                userIDWeb = $"[U:1:{userIDOriginal}]";
-            return userIDWeb;
+            if (long.TryParse(userIDOriginal, out _))
+            {
+                return _game.Alias.Equals("DS1") ? $"[U:1:{userIDOriginal}]" : userIDOriginal;
+            }
+            else if (long.TryParse(userIDOriginal, System.Globalization.NumberStyles.HexNumber, null, out long userID))
+            {
+                return userID.ToString();
+            }
+            else
+            {
+                throw new ArgumentException("Invalid userIDOriginal");
+            }
         }
+
 
         public void OverwriteUsersAppSettings(string key, string value)
         {

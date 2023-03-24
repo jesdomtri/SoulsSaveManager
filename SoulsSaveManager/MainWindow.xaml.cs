@@ -9,7 +9,8 @@
 
         private void ClickSelectGame(object sender, RoutedEventArgs e)
         {
-            System.Windows.Controls.Button? senderTyped = (System.Windows.Controls.Button)sender;
+            if (sender is not System.Windows.Controls.Button senderTyped) return;
+
             Game game = new Game(senderTyped.Name);
             BackupsManager backupManager = new BackupsManager(this, game);
             backupManager.Show();
