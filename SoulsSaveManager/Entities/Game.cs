@@ -5,9 +5,9 @@
         public Game(string alias)
         {
             Alias = alias;
-            Name = SelectTitleGame(alias);
-            SaveDataPath = SelectLocationGame(alias, Name);
-            BackupPath = $".\\Backups\\{Name}";
+            Name = GetGameName(alias);
+            SaveDataPath = GetDefaultSaveRoot(alias, Name);
+            BackupPath = GetDefaultGameBackupPath(Name);
         }
 
         public string Alias { get; set; }
@@ -15,38 +15,32 @@
         public string SaveDataPath { get; set; }
         public string BackupPath { get; set; }
 
-        private static string SelectTitleGame(string gameSelected)
+        public static string GetGameName(string gameSelected) => gameSelected switch
         {
-            switch (gameSelected)
+            "DS1" => "DARK SOULS REMASTERED",
+            "DS2" => "DarkSoulsII",
+            "DS3" => "DarkSoulsIII",
+            "SKR" => "Sekiro",
+            "ED" => "EldenRing",
+            "DM" => "DemonSouls",
+            _ => string.Empty
+        };
+
+        private static string GetDefaultSaveRoot(string gameSelected, string name)
+        {
+            return gameSelected switch
             {
-                case "DS1":
-                    return "DARK SOULS REMASTERED";
-                case "DS2":
-                    return "DarkSoulsII";
-                case "DS3":
-                    return "DarkSoulsIII";
-                case "SKR":
-                    return "Sekiro";
-                case "ED":
-                    return "EldenRing";
-                case "DM":
-                    return "DemonSouls";
-                default:
-                    return "";
-            }
+                "DS1" => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "NBGI", name),
+                "DS2" or "DS3" or "SKR" or "ED" => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), name),
+                "DM" => string.Empty,
+                _ => string.Empty
+            };
         }
 
-        private static string SelectLocationGame(string gameSelected, string name)
+        private static string GetDefaultGameBackupPath(string name)
         {
-            switch (gameSelected)
-            {
-                case "DS1":
-                    return $"\\Users\\{Environment.UserName}\\Documents\\NBGI\\{name}";
-                case "DM":
-                    return "";
-                default:
-                    return $"\\Users\\{Environment.UserName}\\AppData\\Roaming\\{name}";
-            }
+            if (string.IsNullOrWhiteSpace(name)) return string.Empty;
+            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SoulsSaveManager", "Backups", name);
         }
     }
 }

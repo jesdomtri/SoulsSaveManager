@@ -1,3 +1,7 @@
 .vs/
-SoulsSaveManager/bin/
-SoulsSaveManager/obj/
+**/bin/
+**/obj/
+*.user
+TestResults/
+*.log
+

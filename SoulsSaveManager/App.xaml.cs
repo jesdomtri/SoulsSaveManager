@@ -1,44 +1,34 @@
-﻿namespace SoulsSaveManager
+﻿using SoulsSaveManager.Services;
+
+namespace SoulsSaveManager
 {
     public partial class App : System.Windows.Application
     {
         public static IServiceProvider? ServiceProvider { get; private set; }
-        public static IConfiguration? Configuration { get; private set; }
-        public static Dictionary<string, string>? UsersCache = new();
-        public static Dictionary<string, string>? LocationsCache = new();
+        public static ISettingsStore? SettingsStore { get; private set; }
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            CreateAppSettings();
+            base.OnStartup(e);
 
-            IConfigurationBuilder? builder = new ConfigurationBuilder()
-             .SetBasePath(Directory.GetCurrentDirectory())
-             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+            var settingsStore = new JsonSettingsStore();
+            SettingsStore = settingsStore;
+            settingsStore.Load(); // ensures canonical settings/migration
 
-            Configuration = builder.Build();
-
-            UsersCache = Configuration?.GetSection("users").Get<Dictionary<string, string>>();
-            LocationsCache = Configuration?.GetSection("locations").Get<Dictionary<string, string>>();
-
-            ServiceCollection? serviceCollection = new ServiceCollection();
-            ConfigureServices(serviceCollection);
-
-            ServiceProvider = serviceCollection.BuildServiceProvider();
+            var services = new ServiceCollection();
+            ConfigureServices(services, settingsStore);
+            ServiceProvider = services.BuildServiceProvider();
         }
 
-        private void ConfigureServices(IServiceCollection services)
+        private static void ConfigureServices(IServiceCollection services, ISettingsStore settingsStore)
         {
-            services.AddTransient(typeof(MainWindow));
-        }
-
-        private void CreateAppSettings()
-        {
-            string filePath = Path.Combine(Directory.GetCurrentDirectory(), "appsettings.json");
-            if (!File.Exists(filePath))
-            {
-                string json = @"{""users"": {},""locations"": {""DM"": ""Select save location pls""}}";
-                File.WriteAllText(filePath, json);
-            }
+            services.AddSingleton(settingsStore);
+            services.AddSingleton<IAppLogger, FileAppLogger>();
+            services.AddSingleton<IPathResolver, PathResolver>();
+            services.AddSingleton<IBackupService, BackupService>();
+            services.AddSingleton<IUserProfileResolver>(sp => new UserProfileResolver(sp.GetRequiredService<ISettingsStore>()));
+            services.AddTransient<MainWindow>();
+            services.AddTransient<BackupsManager>();
         }
     }
 }
